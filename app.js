@@ -11,7 +11,7 @@ let secretWord = "syzygy";
 // CRUD functionality
 app.get("/secretWord", (req, res) => {
   res.render("secretWord", { secretWord });
-});
+})
 
 app.post("/secretWord", (req, res) => {
   secretWord = req.body.secretWord;
