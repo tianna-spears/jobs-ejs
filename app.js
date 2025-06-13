@@ -5,6 +5,8 @@ require("dotenv").config();
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const url = process.env.MONGO_URI;
+const JobModel = require('./models/Job')
+const UserModel = require('./models/User')
 
 // store session data in Mongo as a session store
 const store = new MongoDBStore({
