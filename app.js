@@ -5,8 +5,8 @@ require("dotenv").config();
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const url = process.env.MONGO_URI;
-const JobModel = require('./models/Job')
-const UserModel = require('./models/User')
+// const JobModel = require('./models/Job')
+// const UserModel = require('./models/User')
 
 // store session data in Mongo as a session store
 const store = new MongoDBStore({
@@ -35,6 +35,12 @@ app.use(session(sessionParms));
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
 app.use(require("connect-flash")());
+app.use(require("./middleware/storeLocals"));
+app.get("/", (req, res) => {
+  res.render("index");
+});
+app.use("/sessions", require("./routes/sessionRoutes"));
+
 
 
 // CRUD functionality
@@ -74,6 +80,7 @@ const port = process.env.PORT || 3000;
 // start server
 const start = async () => {
   try {
+    await require("./db/connect")(process.env.MONGO_URI);
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
