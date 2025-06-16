@@ -46,14 +46,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(require("./middleware/storeLocals"));
 
-
 // routes
 app.get("/", (req, res) => {
   res.render("index");
 });
-
-
-
 
 app.use("/sessions", sessionRoutes);
 app.use("/secretWord", authMiddleware, secretWordRoutes)

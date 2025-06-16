@@ -16,13 +16,10 @@ const registerDo = async (req, res, next) => {
   try {
     const newUser = await User.create({ name, email, password });
 
-    // 👇 This logs the user in (serializes the user into the session)
     req.login(newUser, (err) => {
       if (err) {
-        console.error("❌ req.login error:", err)
-        return next(err); // Could log or handle error more explicitly
+        return next(err);
       }
-  console.log("✅ req.login succeeded.");
     return res.redirect("/secretWord");
     });
 

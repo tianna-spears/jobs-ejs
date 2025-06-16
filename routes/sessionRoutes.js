@@ -21,7 +21,6 @@ router
       failureFlash: true,
     }),
     (req, res) => {
-      console.log("AFTER LOGIN: req.user =", req.user);
       res.redirect("/");
     }
   );
