@@ -6,12 +6,27 @@ const registerShow = (req, res) => {
 };
 
 const registerDo = async (req, res, next) => {
-  if (req.body.password != req.body.password1) {
+  const { name, email, password, password1 } = req.body;
+
+  if (password !== password1) {
     req.flash("error", "The passwords entered do not match.");
-    return res.render("register", {  errors: flash("errors") });
+    return res.render("register", { errors: req.flash("errors") });
   }
+
   try {
-    await User.create(req.body);
+    const newUser = await User.create({ name, email, password });
+
+    // 👇 This logs the user in (serializes the user into the session)
+    req.login(newUser, (err) => {
+      if (err) {
+        console.error("❌ req.login error:", err)
+        return next(err); // Could log or handle error more explicitly
+      }
+      console.log("✅ Logged in user:", newUser);
+      console.log("🧠 Session after login:", req.session);
+      return res.redirect("/");
+    });
+
   } catch (e) {
     if (e.constructor.name === "ValidationError") {
       parseVErr(e, req);
@@ -20,9 +35,8 @@ const registerDo = async (req, res, next) => {
     } else {
       return next(e);
     }
-    return res.render("register", {  errors: flash("errors") });
+    return res.render("register", { errors: req.flash("errors") });
   }
-  res.redirect("/");
 };
 
 const logoff = (req, res) => {
@@ -48,5 +62,5 @@ module.exports = {
   registerShow,
   registerDo,
   logoff,
-  logonShow,
+  logonShow
 };
