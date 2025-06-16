@@ -48,20 +48,8 @@ app.use(require("./middleware/storeLocals"));
 
 
 // routes
-app.get("/", async (req, res) => {
-  console.log("👤 req.user:", req.user);
-  console.log("🧠 req.session:", req.session);
-
-  if (!req.user) {
-    // just for test: manually set
-    const testUser = await User.findOne(); // grab first user
-    req.login(testUser, (err) => {
-      if (err) console.error("Login error:", err);
-      else console.log("✅ Manual login worked.");
-    });
-  }
-
-  res.render("index", { user: req.user });
+app.get("/", (req, res) => {
+  res.render("index");
 });
 
 

@@ -2,16 +2,10 @@
 <%- include("partials/header.ejs") %>
 
 <% if (user) { %>
-<p>User <%= user.name || user.email %> is logged on.</p>
-
-<form method="POST" action="/sessions/logoff">
-  <button>Logoff</button>
-</form>
-
-<a href="/secretWord">Click this link to view/change the secret word.</a>
+  <a href="/secretWord">Click this link to view/change the secret word.</a>
 <% } else { %>
-<a href="/sessions/logon">Click this link to logon.</a>
-<a href="/sessions/register">Click this link to register.</a>
+  <a href="/sessions/logon">Click this link to logon.</a>
+  <a href="/sessions/register">Click this link to register.</a>
 <% } %>
 
 <%- include("partials/footer.ejs") %>

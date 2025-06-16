@@ -16,7 +16,7 @@ router
   .get(logonShow)
   .post(
     passport.authenticate("local", {
-      successRedirect: "/",
+      successRedirect: "/secretWord",
       failureRedirect: "/sessions/logon",
       failureFlash: true,
     }),

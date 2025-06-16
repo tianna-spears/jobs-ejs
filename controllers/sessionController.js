@@ -22,9 +22,8 @@ const registerDo = async (req, res, next) => {
         console.error("❌ req.login error:", err)
         return next(err); // Could log or handle error more explicitly
       }
-      console.log("✅ Logged in user:", newUser);
-      console.log("🧠 Session after login:", req.session);
-      return res.redirect("/");
+  console.log("✅ req.login succeeded.");
+    return res.redirect("/secretWord");
     });
 
   } catch (e) {

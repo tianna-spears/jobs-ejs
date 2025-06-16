@@ -27,20 +27,21 @@ const passportInit = () => {
     )
   );
 
-passport.serializeUser((user, done) => {
-  console.log("🔐 Serializing user:", user._id);
-  done(null, user._id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
+  passport.serializeUser((user, done) => {
     console.log("🔐 Serializing user:", user._id);
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
+    done(null, user._id);
+  });
+
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findById(id);
+      console.log("🔐 Serializing user:", user._id);
+
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
+  });
 };
 
 module.exports = passportInit;
