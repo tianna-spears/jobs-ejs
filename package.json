@@ -17,7 +17,13 @@
   "scripts": {
     "dev": "nodemon app.js",
     "run": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1"},
+    
+    "emmet.includeLanguages": {
+    "ejs": "html"
+  },
+ "[html]": {
+    "editor.defaultFormatter": "j69.ejs-beautify"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -37,7 +43,6 @@
     "nodemon": "^3.1.10",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "prettier": "^3.5.3",
     "xss-clean": "^0.1.4"
   }
 }
