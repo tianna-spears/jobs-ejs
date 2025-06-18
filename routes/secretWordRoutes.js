@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const { getSecretWord, createSecretWord } = require('../controllers/secretWordController')
-const { csrf } = require('../middleware/csrf')
+// const { csrf } = require('../middleware/csrf')
 
-router.get("/", csrf, getSecretWord)
+router.get("/", getSecretWord)
 
-router.post("/",csrf, createSecretWord)
+router.post("/", createSecretWord)
 
 module.exports = router;

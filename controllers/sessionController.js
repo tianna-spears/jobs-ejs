@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const parseVErr = require("../util/parseValidationErrors");
-const { csrf } = require('../middleware/csrf');
-
+// const { csrf } = require('../middleware/csrf');
 
 const registerShow = (req, res) => {
   res.render("register");
@@ -50,10 +49,10 @@ const logonShow = (req, res) => {
     return res.redirect("/");
   }
 
-  const token = csrf.token(req, res)
+  // const token = csrf.token(req, res)
 
   res.render("logon", {
-    _csrf: token,
+    // _csrf: token,
     errors: req.flash("error"),
     info: req.flash("info"),
   });
