@@ -1,14 +1,13 @@
 const express = require('express')
 const app = express()
+const { csrf } = require('../middleware/csrf')
 
 const getSecretWord = async (req, res) => {
   if (!req.session.secretWord) {
     req.session.secretWord = "syzygy";
-  }
-  res.locals.info = req.flash("info");
-  res.locals.errors = req.flash("error");
-  res.render("secretWord", { secretWord: req.session.secretWord });
-};
+  const token = csrf.token(req, res);
+  res.render("secretWord", { secretWord: req.session.secretWord, _csrf: token });
+}}
 
 const createSecretWord=  (req, res) => {
   if (req.body.secretWord.toUpperCase()[0] == "P") {

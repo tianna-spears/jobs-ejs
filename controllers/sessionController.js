@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const parseVErr = require("../util/parseValidationErrors");
+const { csrf } = require('../middleware/csrf');
+
 
 const registerShow = (req, res) => {
   res.render("register");
@@ -7,15 +9,12 @@ const registerShow = (req, res) => {
 
 const registerDo = async (req, res, next) => {
   const { name, email, password, password1 } = req.body;
-
   if (password !== password1) {
     req.flash("error", "The passwords entered do not match.");
     return res.render("register", { errors: req.flash("errors") });
   }
-
   try {
     const newUser = await User.create({ name, email, password });
-
     req.login(newUser, (err) => {
       if (err) {
         return next(err);
@@ -35,6 +34,7 @@ const registerDo = async (req, res, next) => {
   }
 };
 
+
 const logoff = (req, res) => {
   req.session.destroy(function (err) {
     if (err) {
@@ -44,11 +44,16 @@ const logoff = (req, res) => {
   });
 };
 
+
 const logonShow = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
+
+  const token = csrf.token(req, res)
+
   res.render("logon", {
+    _csrf: token,
     errors: req.flash("error"),
     info: req.flash("info"),
   });

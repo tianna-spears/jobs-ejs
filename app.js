@@ -1,8 +1,10 @@
+const cookieParser = require('cookie-parser')
 const express = require("express");
+const session = require("express-session");
+const { csrfMiddleware } = require('./middleware/csrf')
 require("express-async-errors");
 const app = express();
 require("dotenv").config(); 
-const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const url = process.env.MONGO_URI;
 const passport = require("passport");
@@ -11,6 +13,8 @@ const secretWordRoutes = require('./routes/secretWordRoutes')
 const sessionRoutes = require("./routes/sessionRoutes");
 const authMiddleware = require("./middleware/auth");
 const User = require('./models/User')
+
+
 
 // store session data in Mongo as a session store
 const store = new MongoDBStore({
@@ -29,7 +33,14 @@ const sessionParms = {
   cookie: { secure: false, sameSite: "strict" },
 };
 
+app.use(cookieParser('heymia'));
+app.use(express.urlencoded({ extended: false }));
+app.use(require("body-parser").urlencoded({ extended: true }));
+
+
+
 if (app.get("env") === "production") {
+  csrf_development_mode = false;
   app.set("trust proxy", 1); // trust first proxy
   sessionParms.cookie.secure = true; // serve secure cookies
 }
@@ -38,13 +49,13 @@ if (app.get("env") === "production") {
 passportInit();
 app.use(session(sessionParms));
 app.set("view engine", "ejs");
-app.use(require("body-parser").urlencoded({ extended: true }));
 app.use(require("connect-flash")());
 
 // passport-local library
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require("./middleware/storeLocals"));
+
 
 // routes
 app.get("/", (req, res) => {
