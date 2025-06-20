@@ -6,16 +6,15 @@ const registerShow = (req, res) => {
 };
 
 const registerDo = async (req, res, next) => {
+  console.log('CSRF cookie:', req.cookies['csrfToken']);
+  console.log('Form token:', req.body._csrf);
   const { name, email, password, password1 } = req.body;
-
   if (password !== password1) {
     req.flash("error", "The passwords entered do not match.");
     return res.render("register", { errors: req.flash("errors") });
   }
-
   try {
     const newUser = await User.create({ name, email, password });
-
     req.login(newUser, (err) => {
       if (err) {
         return next(err);
@@ -35,19 +34,23 @@ const registerDo = async (req, res, next) => {
   }
 };
 
+
 const logoff = (req, res) => {
-  req.session.destroy(function (err) {
+console.log("CSRF token in request:", req.body._csrf);  req.session.destroy(function (err) {
     if (err) {
       console.log(err);
     }
+    console.log(req.body._csrf)
     res.redirect("/");
   });
 };
+
 
 const logonShow = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
+
   res.render("logon", {
     errors: req.flash("error"),
     info: req.flash("info"),

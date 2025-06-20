@@ -1,58 +1,85 @@
 const express = require("express");
-require("express-async-errors");
-const app = express();
-require("dotenv").config(); 
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
-const url = process.env.MONGO_URI;
 const passport = require("passport");
 const passportInit = require("./passport/passportInit");
+const cookieParser = require('cookie-parser')
+const flash = require("connect-flash")
+const csrf = require("host-csrf")
+
 const secretWordRoutes = require('./routes/secretWordRoutes')
 const sessionRoutes = require("./routes/sessionRoutes");
 const authMiddleware = require("./middleware/auth");
 const User = require('./models/User')
 
+require("dotenv").config(); 
+require("express-async-errors");
+
+const app = express();
+
 // store session data in Mongo as a session store
 const store = new MongoDBStore({
-  uri: url,
+  uri: process.env.MONGO_URI,
   collection: "mySessions",
 });
 store.on("error", function (error) {
   console.log(error);
 });
 
-const sessionParms = {
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  store: store,
-  cookie: { secure: false, sameSite: "strict" },
+app.use(cookieParser(process.env.SESSION_SECRET));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+// csrf configuration
+let csrf_dev_mode = true;
+if (app.get("env") === "production") {
+  csrf_dev_mode = false;
+  app.set("trust proxy", 1);
+}
+
+const csrf_options = {
+  protected_operations: ["POST"],
+  protected_content_types: [
+    "application/x-www-form-urlencoded",
+    "text/plain",
+    "multipart/form-data",
+  ],
+  developer_mode: csrf_dev_mode,
+  cookie_name: "csrfToken",
 };
 
-if (app.get("env") === "production") {
-  app.set("trust proxy", 1); // trust first proxy
-  sessionParms.cookie.secure = true; // serve secure cookies
-}
+const csrf_middleware = csrf(csrf_options);
+app.use(csrf_middleware);
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_default_secret',
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+  cookie: {
+    secure: app.get('env') === 'production',
+    httpOnly: true,
+    sameSite: 'strict'
+  }
+}));
+
+
 
 // middleware 
 passportInit();
-app.use(session(sessionParms));
-app.set("view engine", "ejs");
-app.use(require("body-parser").urlencoded({ extended: true }));
-app.use(require("connect-flash")());
-
-// passport-local library
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash())
+app.set("view engine", "ejs");
 app.use(require("./middleware/storeLocals"));
 
 // routes
+app.use("/sessions", sessionRoutes);
+app.use("/secretWord", authMiddleware, secretWordRoutes)
+
 app.get("/", (req, res) => {
   res.render("index");
 });
-
-app.use("/sessions", sessionRoutes);
-app.use("/secretWord", authMiddleware, secretWordRoutes)
 
 // error handling
 app.use((req, res) => {
@@ -60,8 +87,8 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).send(err.message);
   console.log(err);
+  res.status(500).send(err.message);
 });
 
 // create port
