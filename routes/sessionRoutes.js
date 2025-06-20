@@ -19,6 +19,7 @@ router
       successRedirect: "/secretWord",
       failureRedirect: "/sessions/logon",
       failureFlash: true,
+      
     }),
     (req, res) => {
       res.redirect("/");

@@ -1,12 +1,13 @@
 const User = require("../models/User");
 const parseVErr = require("../util/parseValidationErrors");
-// const { csrf } = require('../middleware/csrf');
 
 const registerShow = (req, res) => {
   res.render("register");
 };
 
 const registerDo = async (req, res, next) => {
+  console.log('CSRF cookie:', req.cookies['csrfToken']);
+  console.log('Form token:', req.body._csrf);
   const { name, email, password, password1 } = req.body;
   if (password !== password1) {
     req.flash("error", "The passwords entered do not match.");
@@ -35,10 +36,11 @@ const registerDo = async (req, res, next) => {
 
 
 const logoff = (req, res) => {
-  req.session.destroy(function (err) {
+console.log("CSRF token in request:", req.body._csrf);  req.session.destroy(function (err) {
     if (err) {
       console.log(err);
     }
+    console.log(req.body._csrf)
     res.redirect("/");
   });
 };
@@ -49,10 +51,7 @@ const logonShow = (req, res) => {
     return res.redirect("/");
   }
 
-  // const token = csrf.token(req, res)
-
   res.render("logon", {
-    // _csrf: token,
     errors: req.flash("error"),
     info: req.flash("info"),
   });
