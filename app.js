@@ -10,7 +10,7 @@ const passportInit = require("./passport/passportInit");
 const secretWordRoutes = require('./routes/secretWordRoutes')
 const sessionRoutes = require("./routes/sessionRoutes");
 const authMiddleware = require("./middleware/auth");
-const User = require('./models/User')
+const flash = require('connect-flash')
 
 // store session data in Mongo as a session store
 const store = new MongoDBStore({
@@ -39,12 +39,15 @@ passportInit();
 app.use(session(sessionParms));
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
-app.use(require("connect-flash")());
 
 // passport-local library
 app.use(passport.initialize());
 app.use(passport.session());
+
+// use connect-flash package
+app.use(flash())
 app.use(require("./middleware/storeLocals"));
+
 
 // routes
 app.get("/", (req, res) => {
