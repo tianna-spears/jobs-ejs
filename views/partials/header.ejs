@@ -8,18 +8,21 @@
 </form>
 
 <% } %>
-<% if (errors) {
-    errors.forEach((err) => { %>
-<div>
-  Error: <%= err %>
-</div>
-<% })
-  } %>
-<% if (info) {
-    info.forEach((msg) => { %>
-<div>
-  Info: <%= msg %>
-</div>
-<% })
-  } %>
+
+<% if (Array.isArray(errors)) {
+     errors.forEach((err) => { %>
+  <div>
+    Error: <%= err %>
+  </div>
+<%   })
+   } %>
+
+<% if (Array.isArray(info)) {
+     info.forEach((msg) => { %>
+  <div>
+    Info: <%= msg %>
+  </div>
+<%   })
+   } %>
+
 <hr />

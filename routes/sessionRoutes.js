@@ -1,6 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
+const flash = require("connect-flash")
 // const {csrfMiddleware, csrf} = require('../middleware/csrf')
 
 const {
@@ -10,7 +11,7 @@ const {
   logoff,
 } = require("../controllers/sessionController");
 
-router.route("/register").get(registerShow).post(registerDo);
+router.route("/register").get(registerShow).post(registerDo)
 
 router
   .route("/logon")

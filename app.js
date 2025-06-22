@@ -10,7 +10,7 @@ const csrf = require("host-csrf")
 const secretWordRoutes = require('./routes/secretWordRoutes')
 const sessionRoutes = require("./routes/sessionRoutes");
 const authMiddleware = require("./middleware/auth");
-const User = require('./models/User')
+const flash = require('connect-flash')
 
 require("dotenv").config(); 
 require("express-async-errors");
@@ -67,11 +67,14 @@ app.use(session({
 
 // middleware 
 passportInit();
+app.use(session(sessionParms));
+app.use(require("body-parser").urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash())
 app.set("view engine", "ejs");
 app.use(require("./middleware/storeLocals"));
+
 
 // routes
 app.use("/sessions", sessionRoutes);

@@ -1,3 +1,4 @@
+const flash = require('connect-flash')
 const { token } = require("host-csrf");
 
 const storeLocals = (req, res, next) => {
@@ -7,9 +8,13 @@ const storeLocals = (req, res, next) => {
   } catch (err) {
     res.locals.csrfToken = null;
   }
-  res.locals.user = req.user;
-  res.locals.info = req.flash("info");
-  res.locals.errors = req.flash("error");
+
+if (!res.locals.info) {
+    res.locals.info = req.flash("info");
+  }
+  if (!res.locals.errors) {
+    res.locals.errors = req.flash("error");
+  }
   next();
 };
 

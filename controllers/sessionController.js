@@ -1,8 +1,9 @@
 const User = require("../models/User");
 const parseVErr = require("../util/parseValidationErrors");
+const flash = require('connect-flash')
 
 const registerShow = (req, res) => {
-  res.render("register");
+  res.render("register", { errors: [] });
 };
 
 const registerDo = async (req, res, next) => {
@@ -11,7 +12,7 @@ const registerDo = async (req, res, next) => {
   const { name, email, password, password1 } = req.body;
   if (password !== password1) {
     req.flash("error", "The passwords entered do not match.");
-    return res.render("register", { errors: req.flash("errors") });
+    return res.render("register", { errors: req.flash("error") });
   }
   try {
     const newUser = await User.create({ name, email, password });
@@ -30,7 +31,7 @@ const registerDo = async (req, res, next) => {
     } else {
       return next(e);
     }
-    return res.render("register", { errors: req.flash("errors") });
+    return res.render("register", { errors: req.flash("error") });
   }
 };
 
