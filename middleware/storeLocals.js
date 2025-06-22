@@ -1,7 +1,13 @@
 const flash = require('connect-flash')
+const { token } = require("host-csrf");
 
 const storeLocals = (req, res, next) => {
-  res.locals.user = req.user || null;
+  try {
+    res.locals.csrfToken = token(req, res);
+    console.log("Generated CSRF token:", res.locals.csrfToken);
+  } catch (err) {
+    res.locals.csrfToken = null;
+  }
 
 if (!res.locals.info) {
     res.locals.info = req.flash("info");

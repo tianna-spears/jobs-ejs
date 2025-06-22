@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const flash = require("connect-flash")
+// const {csrfMiddleware, csrf} = require('../middleware/csrf')
 
 const {
   logonShow,
@@ -15,11 +16,11 @@ router.route("/register").get(registerShow).post(registerDo)
 router
   .route("/logon")
   .get(logonShow)
-  .post(
-    passport.authenticate("local", {
+  .post(passport.authenticate("local", {
       successRedirect: "/secretWord",
       failureRedirect: "/sessions/logon",
       failureFlash: true,
+      
     }),
     (req, res) => {
       res.redirect("/");
